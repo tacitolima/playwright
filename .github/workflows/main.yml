@@ -16,3 +16,15 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: npx playwright test
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: playwright-report/ 
+          retention-days: 30  
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
