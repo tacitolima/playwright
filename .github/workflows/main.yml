@@ -1,38 +1,26 @@
-name: Playwright Tests
+name: Playwright
 
-on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+on: [push]
 
 permissions:
   pages: write
   id-token: write
-
+  
 jobs:
-  test:
-    timeout-minutes: 60
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
+      - uses: actions/checkout@v4
+      - name: Use Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright
-        run: npx playwright install --with-deps
-
-      - name: Run Playwright tests
-        run: npx playwright test
-
+          node-version: '20.x'
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npx playwright test
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
@@ -40,19 +28,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: playwright-report/ 
-          retention-days: 30   
+          retention-days: 30  
 
-  deployment:
-  
-    runs-on: ubuntu-latest
-    needs: test
-    if: always()
-
-    environment:
-      name: p
-      url: ${{steps.deployment.outputs.page_url}}
-
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
